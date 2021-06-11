@@ -12,12 +12,12 @@ function initCarousel() {
 
   document.addEventListener("click", function(event) {
     if (event.target.tagName == "IMG" &&
-        event.target.parentElement.classList.contains("carousel__arrow_right") &&
-        position < maxShiftWidth) {
+    event.target.parentElement.classList.contains("carousel__arrow_right")) {
       
       arrowLeft.style.display = "";
 
       position += slideWidth;
+
       carouselInner.style.transform = `translateX(-${position}px)`;
 
       if (position == maxShiftWidth) {
@@ -27,7 +27,7 @@ function initCarousel() {
     } 
     
     if (event.target.tagName == "IMG" &&
-        event.target.parentElement.classList.contains("carousel__arrow_left")) {
+    event.target.parentElement.classList.contains("carousel__arrow_left")) {
 
       arrowRight.style.display = "";
       
@@ -39,9 +39,4 @@ function initCarousel() {
       }
     }
   });
-  
-
-  
-
-
 }
