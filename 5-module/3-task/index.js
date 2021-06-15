@@ -3,7 +3,7 @@ function initCarousel() {
   let arrowRight = document.querySelector(".carousel__arrow_right");
   let slideWidth = document.querySelector(".carousel__slide").offsetWidth;
   let numberOfSlides = document.querySelectorAll(".carousel__slide").length;
-  let maxShiftWidth = slideWidth * (numberOfSlides - 1);
+  let maxShift = slideWidth * (numberOfSlides - 1);
   let carouselInner = document.querySelector(".carousel__inner");
   let position = 0;
 
@@ -11,8 +11,7 @@ function initCarousel() {
   arrowLeft.style.display = "none";
 
   document.addEventListener("click", function(event) {
-    if (event.target.tagName == "IMG" &&
-    event.target.parentElement.classList.contains("carousel__arrow_right")) {
+    if (event.target.closest(".carousel__arrow_right")) {
       
       arrowLeft.style.display = "";
 
@@ -20,14 +19,13 @@ function initCarousel() {
 
       carouselInner.style.transform = `translateX(-${position}px)`;
 
-      if (position == maxShiftWidth) {
+      if (position == maxShift) {
         arrowRight.style.display = "none";
       }
     
     } 
     
-    if (event.target.tagName == "IMG" &&
-    event.target.parentElement.classList.contains("carousel__arrow_left")) {
+    if (event.target.closest(".carousel__arrow_left")) {
 
       arrowRight.style.display = "";
       
@@ -39,4 +37,4 @@ function initCarousel() {
       }
     }
   });
-}
+} 
