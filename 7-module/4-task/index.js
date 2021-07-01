@@ -1,5 +1,6 @@
 export default class StepSlider {
   constructor({ steps, value = 0 }) {
+
     this.value = value;
     this.steps = steps;
     this.render();
@@ -131,5 +132,6 @@ export default class StepSlider {
   changeValue() {
     let newValue = new CustomEvent('slider-change', {detail: this.value, bubbles: true});
     this.elem.dispatchEvent(newValue);
+
   }
 }
