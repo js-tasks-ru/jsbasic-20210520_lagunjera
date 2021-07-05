@@ -170,7 +170,6 @@ export default class Cart {
       }
     }
 
-
     this.cartIcon.update(this);
   }
 
@@ -181,7 +180,6 @@ export default class Cart {
     event.preventDefault();
 
     let form = document.querySelector('.cart-form');
-    console.log('this before', this);
 
     fetch('https://httpbin.org/post', {
       method: 'POST',
@@ -205,8 +203,7 @@ export default class Cart {
       `;
 
         this.cartItems = [];
-        console.log('this after', this);
-        
+        this.cartIcon.update(this);
       }    
 
     });
