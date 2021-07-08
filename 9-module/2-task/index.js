@@ -113,7 +113,7 @@ export default class Main {
 
   onChangeVegeterianCbx(event) {
     this.productsGrid.updateFilter({
-      noNuts: event.target.checked
+      vegeterianOnly: event.target.checked
     });
   }
 }
