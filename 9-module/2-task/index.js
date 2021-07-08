@@ -115,5 +115,6 @@ export default class Main {
     this.productsGrid.updateFilter({
       vegeterianOnly: event.target.checked
     });
+
   }
 }
