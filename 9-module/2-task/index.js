@@ -115,5 +115,6 @@ export default class Main {
     this.productsGrid.updateFilter({
       noNuts: event.target.checked
     });
+
   }
 }
