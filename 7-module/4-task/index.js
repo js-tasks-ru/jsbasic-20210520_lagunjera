@@ -1,10 +1,10 @@
 export default class StepSlider {
-  constructor({ steps, value = 0 }) {
+  constructor({ steps, value = 0}) {
 
-    this.value = value;
     this.steps = steps;
     this.render();
     this.addListeners();
+    this.setValue(value);
   }
 
   render() {
@@ -20,7 +20,7 @@ export default class StepSlider {
 
     let sliderStr = `<div class="slider">
     <div class="slider__thumb">
-      <span class="slider__value">${this.value}</span>
+      <span class="slider__value"></span>
     </div>
     <div class="slider__progress"></div>
   
@@ -34,6 +34,32 @@ export default class StepSlider {
     return slider.firstElementChild;
   }
 
+  setValue(value) {
+    this.value = value;
+
+    let segments = this.steps - 1;
+    let valuePercents = (value / segments) * 100;
+
+    let thumb = this.elem.querySelector('.slider__thumb');
+    let progress = this.elem.querySelector('.slider__progress');
+    let sliderValue = this.elem.querySelector('.slider__value');
+
+    thumb.style.left = `${valuePercents}%`;
+    progress.style.width = `${valuePercents}%`;
+
+    sliderValue.innerHTML = value;
+
+    let stepActive = this.elem.querySelector(`.slider__step-active`);
+    let steps = this.elem.querySelector(`.slider__steps`);
+
+
+    if (stepActive) {
+      stepActive.classList.remove('slider__step-active');
+    }
+
+    steps.children[this.value].classList.add('slider__step-active');
+  }
+
   addListeners() {
     this.elem.addEventListener('click', this.shiftOnClick.bind(this));
     this.elem.addEventListener('click', this.changeValue.bind(this));
@@ -44,89 +70,81 @@ export default class StepSlider {
 
   shiftOnDragAndDrop(onPointerDownEvent) {
     let thumb = this.elem.querySelector('.slider__thumb');
+    thumb.ondragstart = () => false;
+
+    document.addEventListener('pointermove', this.onPointerMove);
+    document.addEventListener('pointerup', this.onPointerUp);
+
+    this.elem.classList.add('slider_dragging');
+
+  }
+
+  onPointerMove = (pointerEvent) => {
+    pointerEvent.preventDefault(); 
+
+    let left = pointerEvent.clientX - this.elem.getBoundingClientRect().left;
+    let leftRelative = left / this.elem.offsetWidth;
+
+    if (leftRelative < 0) {
+      leftRelative = 0;
+    }
+
+    if (leftRelative > 1) {
+      leftRelative = 1;
+    }
+
+    let thumb = this.elem.querySelector('.slider__thumb');
     let progress = this.elem.querySelector('.slider__progress');
     let sliderValue = this.elem.querySelector('.slider__value');
 
-    let onPointerMove = (pointerEvent) => {
-      this.elem.classList.add('slider_dragging');
+    thumb.style.left = `${leftRelative * 100}%`;
+    progress.style.width = `${leftRelative * 100}%`;
 
-      let left = pointerEvent.clientX - this.elem.getBoundingClientRect().left;
-      let leftRelative = left / this.elem.offsetWidth;
+    let segments = this.steps - 1;
+    let approximateValue = leftRelative * segments;
 
-      if (leftRelative < 0) {
-        leftRelative = 0;
-      }
+    let value = Math.round(approximateValue);
+    this.value = value;
+    sliderValue.innerHTML = this.value;
 
-      if (leftRelative > 1) {
-        leftRelative = 1;
-      }
+    
+    let allSteps = this.elem.querySelector('.slider__steps').children;
 
-      let segments = this.steps - 1;
-      let approximateValue = leftRelative * segments;
+    for (let i = 0; i < allSteps.length; i++) {
+      allSteps[i].classList.remove('slider__step-active');
+    }
 
-      let value = Math.round(approximateValue);
-      this.value = value;
-      sliderValue.innerHTML = this.value;
+    allSteps[value].classList.add('slider__step-active');
+  }
 
-      let allSteps = this.elem.querySelector('.slider__steps').children;
+  onPointerUp = (pointerEvent) => {
+    pointerEvent.preventDefault();
 
-      for (let i = 0; i < allSteps.length; i++) {
-        allSteps[i].classList.remove('slider__step-active');
-      }
-  
-      allSteps[value].classList.add('slider__step-active');
+    document.removeEventListener('pointermove', this.onPointerMove);
+    document.removeEventListener('onPointerUp', this.onPointerUp);
 
-      //let leftPercents = value / segments * 100;
-      let leftPercents = leftRelative * 100;
+    this.elem.classList.remove('slider_dragging');
 
-      thumb.style.left = `${leftPercents}%`;
-      progress.style.width = `${leftPercents}%`;
+    let thumb = this.elem.querySelector('.slider__thumb');
+    let progress = this.elem.querySelector('.slider__progress');
+    let segments = this.steps - 1;
 
-      pointerEvent.preventDefault(); 
-    };
+    // stick to the final value
+    thumb.style.left = `${(this.value / segments) * 100}%`;
+    progress.style.width = `${(this.value / segments) * 100}%`;
 
-
-    let onPointerUp = (pointerEvent) => {
-      document.removeEventListener('pointermove', onPointerMove);
-
-      this.changeValue();
-
-      this.elem.classList.remove('slider_dragging');
-      pointerEvent.preventDefault();
-    };
-
-
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
-
-    thumb.ondragstart = () => false;
+    this.changeValue();
   }
 
   shiftOnClick(onClickEvent) {
-    let allSteps = this.elem.querySelector('.slider__steps').children;
-    let thumb = this.elem.querySelector('.slider__thumb');
-    let progress = this.elem.querySelector('.slider__progress');
 
     let left = onClickEvent.clientX - this.elem.getBoundingClientRect().left;
     let leftRelative = left / this.elem.offsetWidth;
     let segments = this.steps - 1;
     let approximateValue = leftRelative * segments;
     let value = Math.round(approximateValue);
-    let valuePercents = value / segments * 100;
 
-    this.value = value;
-    
-    let sliderValue = this.elem.querySelector('.slider__value');
-    sliderValue.innerHTML = this.value;
-    
-    for (let i = 0; i < allSteps.length; i++) {
-      allSteps[i].classList.remove('slider__step-active');
-    }
-
-    allSteps[value].classList.add('slider__step-active');
-
-    thumb.style.left = `${valuePercents}%`;
-    progress.style.width = `${valuePercents}%`;
+    this.setValue(value);
   }
  
   changeValue() {

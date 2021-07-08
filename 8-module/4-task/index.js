@@ -155,19 +155,24 @@ export default class Cart {
     if (modalOpen) {
       let productId = cartItem.product.id;
       let modalBody = document.querySelector('.modal__body');
+      let product = modalBody.querySelector(`[data-product-id="${productId}"]`);
       let productCount = modalBody.querySelector(`[data-product-id="${productId}"] .cart-counter__count`);
       let productPrice = modalBody.querySelector(`[data-product-id="${productId}"] .cart-product__price`);
       let infoPrice = modalBody.querySelector(`.cart-buttons__info-price`);
 
- 
-      productCount.innerHTML = cartItem.count;
-      productPrice.innerHTML = `€${(cartItem.product.price * cartItem.count).toFixed(2)}`;
-      infoPrice.innerHTML = `€${this.getTotalPrice().toFixed(2)}`;
-
+       
       if (this.isEmpty()) {
         let modal = new Modal();
         modal.close();
       }
+
+      if (cartItem.count == 0) {
+        product.remove();
+      }
+
+      productCount.innerHTML = cartItem.count;
+      productPrice.innerHTML = `€${(cartItem.product.price * cartItem.count).toFixed(2)}`;
+      infoPrice.innerHTML = `€${this.getTotalPrice().toFixed(2)}`;
     }
 
     this.cartIcon.update(this);
