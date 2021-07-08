@@ -38,41 +38,50 @@ export default class CartIcon {
     window.addEventListener('resize', () => this.updatePosition());
   }
 
-  updatePosition() {
-    if (this.elem.offsetWidth == 0 || document.documentElement.clientWidth <= 767) {
-      return;
-    }
+  fixPosition = () => {
+    let leftIndent = Math.min(
+      document.querySelector('.container').getBoundingClientRect().right + 20,
+      document.documentElement.clientWidth - this.elem.offsetWidth - 10
+    ) + 'px';
 
-    let initialTopCoord = this.elem.getBoundingClientRect().top + window.pageYOffset;
-
-    if (window.pageYOffset > initialTopCoord) {
-      let leftIndent = Math.min(
-        document.querySelector('.container').getBoundingClientRect().right + 20,
-        document.documentElement.clientWidth - this.elem.offsetWidth - 10
-      ) + 'px';
-      
-
-      Object.assign(this.elem.style, {
-        position: 'fixed',
-        top: '50px',
-        zIndex: 1e3,
-        right: '10px',
-        left: leftIndent
-      });
-
-    } else {
-      //this.elem.style.right = 0;
-      
-      /* Object.assign(this.elem.style, {
-        position: '',
-        top: '',
-        left: '',
-        zIndex: ''
-      }); */
-    }
-
-    
-
-    
+    Object.assign(this.elem.style, {
+      position: 'fixed',
+      top: '50px',
+      zIndex: 1e3,
+      //right: '10px',
+      left: leftIndent
+    });
   }
+
+  resetPosition = () => {
+    Object.assign(this.elem.style, {
+      position: "",
+      top: "",
+      left: "",
+      zIndex: ""
+    });
+  }
+
+  updatePosition() {
+
+    //let initialTopCoord;
+
+    if (!this.initialTopCoord) {
+      this.initialTopCoord = this.elem.getBoundingClientRect().top + window.pageYOffset;
+    }
+
+    if (document.documentElement.clientWidth <= 767) {
+      this.resetPosition();
+    } else {
+      if (window.pageYOffset > this.initialTopCoord) {
+        this.fixPosition();
+      } else {
+        this.resetPosition();
+      }
+    }
+
+  }
+
 }
+
+  
